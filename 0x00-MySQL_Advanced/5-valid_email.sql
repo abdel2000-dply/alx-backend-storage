@@ -1,6 +1,6 @@
 -- Creates a trigger that resets the attribute valid_email
 -- only when the email has been changed.
-DELIMETER //
+DELIMITER //
 CREATE TRIGGER rest_email_valid
 BEFORE UPDATE ON users FOR EACH ROW
 BEGIN
@@ -9,4 +9,4 @@ BEGIN
   END IF;
 END;
 //
-DELIMETER ;
+DELIMITER ;
