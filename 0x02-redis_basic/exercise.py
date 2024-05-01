@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 ''' Redis exercise '''
+from functools import wraps
 import redis
 from typing import Union, Callable
 from uuid import uuid4
 
 
+def count_calls(method: Callable) -> Callable:
+    ''' Count calls decorator '''
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        ''' Wrapper '''
+        key = method.__qualname__
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+    return wrapper
+
+
+@count_calls
 class Cache:
     ''' Cache class '''
     def __init__(self) -> None:
