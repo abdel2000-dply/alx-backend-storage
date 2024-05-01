@@ -2,7 +2,7 @@
 ''' Redis exercise '''
 from functools import wraps
 import redis
-from typing import Union, Callable
+from typing import Union, Callable, Optional
 from uuid import uuid4
 
 
@@ -17,7 +17,6 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
-@count_calls
 class Cache:
     ''' Cache class '''
     def __init__(self) -> None:
@@ -26,6 +25,7 @@ class Cache:
         # self._redis = redis.Redis(decode_responses=True)/we can use this too
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         ''' Store method '''
         key = str(uuid4())
@@ -33,7 +33,7 @@ class Cache:
         return key
 
     def get(self, key: str,
-            fn: callable = None) -> Union[str, bytes, int, float]:
+            fn: callable = None) -> Optional[Union[str, bytes, int, float]]:
         ''' Get method '''
         data = self._redis.get(key)
         if data is None:
@@ -42,10 +42,10 @@ class Cache:
             return fn(data)
         return data
 
-    def get_str(self, key: str) -> Union[str, None]:
+    def get_str(self, key: str) -> Optional[str]:
         ''' Get str method '''
         return self.get(key, lambda x: x.decode('utf-8'))
 
-    def get_int(self, key: str) -> Union[int, None]:
+    def get_int(self, key: str) -> Optional[int]:
         ''' Get int method '''
         return self.get(key, int)
