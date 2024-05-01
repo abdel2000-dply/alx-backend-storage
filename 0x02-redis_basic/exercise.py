@@ -41,7 +41,7 @@ def reply(method: Callable) -> Callable:
     outputs = method.__self__._redis.lrange(output_key, 0, -1)
     print("{} was called {} times:".format(method.__qualname__, len(inputs)))
     for input, output in zip(inputs, outputs):
-        print("{} -> {}".format(input.decode('utf-8'), output.decode('utf-8')))
+        print(f'{method.__qualname__}(*{input}) -> {output}')
 
 
 class Cache:
