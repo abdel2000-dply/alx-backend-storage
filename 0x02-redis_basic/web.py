@@ -8,11 +8,14 @@ r = redis.Redis()
 
 def get_page(url: str) -> str:
     ''' Get page '''
-    if r.get(f"count:{url}"):
-        r.incr(f"count:{url}")
-        return r.get(url).decode('utf-8')
+    page_key = f"page:{url}"
+    count_key = f"count:{url}"
+
+    if r.get(page_key):
+        r.incr(count_key)
+        return r.get(page_key).decode('utf-8')
 
     response = requests.get(url)
-    r.setex(url, 10, response.text)
-    r.set(f"count:{url}", 1)
+    r.setex(page_key, 10, response.text)
+    r.set(count_key, 1)
     return response.text
